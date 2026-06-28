@@ -1,61 +1,127 @@
 <?php
 
-namespace App\Filament\Resources\VisiMisi;
+namespace App\Filament\Resources\Visimisis;
 
 use App\Models\Visimisi;
-use BackedEnum;
-use UnitEnum;
+use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\Visimisis\Pages\ListVisimisis;
+use App\Filament\Resources\Visimisis\Pages\CreateVisimisi;
+use App\Filament\Resources\Visimisis\Pages\EditVisimisi;
+use Illuminate\Support\Str;
+use BackedEnum;
+use UnitEnum;
 
 class VisimisiResource extends Resource
 {
-    // MODEL
-    protected static string|null $model = Visimisi::class;
+    protected static ?string $model = Visimisi::class;
 
-    // ICON
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-eye';
-
-    // LABEL
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-eye';
+    protected static string | UnitEnum | null $navigationGroup = 'Profil Universitas';
     protected static ?string $navigationLabel = 'Visi & Misi';
     protected static ?string $modelLabel = 'Visi & Misi';
     protected static ?string $pluralModelLabel = 'Visi & Misi';
-
-    // GROUP & SORT (FIX TYPE)
-    protected static string|UnitEnum|null $navigationGroup = 'Profil Universitas';
     protected static ?int $navigationSort = 3;
 
-    // TITLE
-    protected static ?string $recordTitleAttribute = 'judul';
-
-    // FORM (INI YANG BENAR UNTUK VISI MISI)
     public static function form(Schema $schema): Schema
     {
-        return $schema->components([
-            Textarea::make('visi')
-                ->label('Visi')
-                ->required()
-                ->rows(4),
+        return $schema
+            ->components([
+                Forms\Components\RichEditor::make('visi')
+                    ->label('Visi')
+                    ->toolbarButtons([
+                        'bold',
+                        'italic',
+                        'underline',
+                        'bulletList',
+                        'orderedList',
+                        'link',
+                        'h3',
+                    ])
+                    ->required()
+                    ->columnSpanFull(),
 
-            Textarea::make('misi')
-                ->label('Misi')
-                ->required()
-                ->rows(6),
-        ]);
+                Forms\Components\RichEditor::make('misi')
+                    ->label('Misi')
+                    ->toolbarButtons([
+                        'bold',
+                        'italic',
+                        'underline',
+                        'bulletList',
+                        'orderedList',
+                        'link',
+                        'h3',
+                    ])
+                    ->required()
+                    ->helperText('Gunakan numbered list untuk menuliskan poin-poin misi.')
+                    ->columnSpanFull(),
+
+                Forms\Components\FileUpload::make('image')
+                    ->label('Foto (Multiple)')
+                    ->image()
+                    ->multiple()
+                    ->reorderable()
+                    ->maxFiles(5)
+                    ->directory('visimisis')
+                    ->visibility('public')
+                    ->imagePreviewHeight('120')
+                    ->maxSize(2048)
+                    ->required()
+                    ->helperText('Bisa upload beberapa foto. Maks 5 foto, masing-masing 2MB.')
+                    ->columnSpanFull(),
+            ]);
     }
 
-    // TABLE
     public static function table(Table $table): Table
     {
-        return $table;
-    }
+        return $table
+            ->columns([
+                ImageColumn::make('image')
+                    ->label('Foto')
+                    ->disk('public')
+                    ->height(50)
+                    ->stacked()
+                    ->limit(3)
+                    ->limitedRemainingText(),
 
-    public static function infolist(Schema $schema): Schema
-    {
-        return $schema;
+                TextColumn::make('visi')
+                    ->label('Visi')
+                    ->formatStateUsing(fn (?string $state): string => Str::limit(strip_tags($state ?? ''), 60))
+                    ->wrap()
+                    ->searchable(),
+
+                TextColumn::make('misi')
+                    ->label('Misi')
+                    ->formatStateUsing(fn (?string $state): string => Str::limit(strip_tags($state ?? ''), 60))
+                    ->wrap()
+                    ->toggleable(),
+
+                TextColumn::make('updated_at')
+                    ->label('Diperbarui')
+                    ->dateTime('d M Y H:i')
+                    ->sortable(),
+            ])
+            ->filters([
+                //
+            ])
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ])
+            ->defaultSort('updated_at', 'desc');
     }
 
     public static function getRelations(): array
@@ -66,9 +132,9 @@ class VisimisiResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => \App\Filament\Resources\Visimisi\Pages\ListVisiMisis::route('/'),
-            'create' => \App\Filament\Resources\Visimisi\Pages\CreateVisiMisi::route('/create'),
-            'edit'   => \App\Filament\Resources\Visimisi\Pages\EditVisiMisi::route('/{record}/edit'),
+            'index' => ListVisimisis::route('/'),
+            'create' => CreateVisimisi::route('/create'),
+            'edit' => EditVisimisi::route('/{record}/edit'),
         ];
     }
 }

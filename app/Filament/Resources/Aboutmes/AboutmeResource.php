@@ -1,60 +1,48 @@
 <?php
 
-namespace App\Filament\Resources\AboutMe;
+namespace App\Filament\Resources\Aboutmes;
 
-use App\Models\AboutMe;
-use BackedEnum;
-use UnitEnum;
-use App\Filament\Resources\Aboutmes\Tables\AboutmesTable;
-use App\Filament\Resources\Aboutmes\Forms\AboutmesForm;
+use App\Models\Aboutme;
+use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Tables\Table;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Forms;
-use Filament\Schemas\Components\Textarea;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Table;
+use App\Filament\Resources\Aboutmes\Pages\ListAboutmes;
+use App\Filament\Resources\Aboutmes\Pages\CreateAboutme;
+use App\Filament\Resources\Aboutmes\Pages\EditAboutme;
 use Illuminate\Support\Str;
+use BackedEnum;
+use UnitEnum;
 
-class AboutMeResource extends Resource
+class AboutmeResource extends Resource
 {
-    // MODEL
-    protected static string|null $model = AboutMe::class;
+    protected static ?string $model = Aboutme::class;
 
-    // ICON
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-information-circle';
-
-    // LABEL
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-information-circle';
+    protected static string | UnitEnum | null $navigationGroup = 'Profil Universitas';
     protected static ?string $navigationLabel = 'Profil Universitas';
     protected static ?string $modelLabel = 'Profil';
     protected static ?string $pluralModelLabel = 'Profil Universitas';
-
-    // GROUP & SORT (FIX TYPE)
-    protected static string|UnitEnum|null $navigationGroup = 'Profil Universitas';
     protected static ?int $navigationSort = 1;
 
-    // TITLE
-    protected static ?string $recordTitleAttribute = 'judul';
-
-    // FORM (sementara kosong)
     public static function form(Schema $schema): Schema
     {
-        return $schema
+        return $schema  
             ->components([
-                TextArea::make('content')
+                Forms\Components\Textarea::make('content')
                     ->label('Deskripsi Profil')
                     ->required()
                     ->rows(5)
                     ->placeholder('Tuliskan profil singkat universitas (keunggulan, fokus pendidikan, dll.)')
                     ->helperText('Deskripsi singkat tanpa formatting. Untuk konten berformat gunakan menu Sejarah.')
                     ->columnSpanFull(),
-
-                FileUpload::make('image')
+                Forms\Components\FileUpload::make('image')
                     ->label('Foto (Multiple)')
                     ->image()
                     ->multiple()
@@ -70,7 +58,6 @@ class AboutMeResource extends Resource
             ]);
     }
 
-    // TABLE (sementara kosong)
     public static function table(Table $table): Table
     {
         return $table
@@ -82,19 +69,16 @@ class AboutMeResource extends Resource
                     ->stacked()
                     ->limit(3)
                     ->limitedRemainingText(),
-
                 TextColumn::make('content')
                     ->label('Deskripsi')
                     ->formatStateUsing(fn (?string $state): string => Str::limit(strip_tags($state ?? ''), 100))
                     ->wrap()
                     ->searchable(),
-
                 TextColumn::make('created_at')
                     ->label('Ditambahkan')
                     ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-
                 TextColumn::make('updated_at')
                     ->label('Diperbarui')
                     ->dateTime('d M Y H:i')
@@ -103,22 +87,16 @@ class AboutMeResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('updated_at', 'desc');
-    }
-
-
-    public static function infolist(Schema $schema): Schema
-    {
-        return $schema;
     }
 
     public static function getRelations(): array
@@ -129,10 +107,9 @@ class AboutMeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => \App\Filament\Resources\AboutMe\Pages\ListAboutMe::route('/'),
-            'create' => \App\Filament\Resources\AboutMe\Pages\CreateAboutMe::route('/create'),
-            'edit'   => \App\Filament\Resources\AboutMe\Pages\EditAboutMe::route('/{record}/edit'),
-            'view'   => \App\Filament\Resources\AboutMe\Pages\ViewAboutMe::route('/{record}'),
+            'index' => ListAboutmes::route('/'),
+            'create' => CreateAboutme::route('/create'),
+            'edit' => EditAboutme::route('/{record}/edit'),
         ];
     }
 }
