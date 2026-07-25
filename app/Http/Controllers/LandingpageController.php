@@ -15,6 +15,7 @@ use App\Models\News;
 use App\Models\Rektor;
 use App\Models\Student;
 use App\Models\Visimisi;
+use App\Models\Book;
 
 class LandingpageController extends Controller
 {
@@ -112,5 +113,16 @@ class LandingpageController extends Controller
         $footer   = Footer::first();
 
         return view('students', compact('students', 'footer'));
+    }
+
+    /**
+ * Halaman daftar buku.
+ */
+    public function books()
+    {
+    $books = Book::latest()->paginate(12);
+    $footer = Footer::first();
+
+    return view('books', compact('books', 'footer'));
     }
 }

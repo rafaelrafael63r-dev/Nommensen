@@ -18,6 +18,7 @@
                 <li><a href="<?php echo e(route('profile')); ?>"       class="hover:text-blue-600 transition">Profil</a></li>
                 <li><a href="<?php echo e(route('lectures')); ?>"      class="hover:text-blue-600 transition">Dosen</a></li>
                 <li><a href="<?php echo e(route('students')); ?>"      class="hover:text-blue-600 transition">Mahasiswa</a></li>
+                <li><a href="<?php echo e(route('books')); ?>" class="hover:text-blue-600 transition">Buku</a></li>
                 <li><a href="<?php echo e(route('announcements')); ?>" class="hover:text-blue-600 transition">Pengumuman</a></li>
                 <li><a href="<?php echo e(route('news')); ?>"          class="hover:text-blue-600 transition">Berita</a></li>
             </ul>
@@ -47,6 +48,7 @@
                 <li><a href="<?php echo e(route('profile')); ?>"       class="block py-2 px-2 rounded hover:bg-slate-50">Profil</a></li>
                 <li><a href="<?php echo e(route('lectures')); ?>"      class="block py-2 px-2 rounded hover:bg-slate-50">Dosen</a></li>
                 <li><a href="<?php echo e(route('students')); ?>"      class="block py-2 px-2 rounded hover:bg-slate-50">Mahasiswa</a></li>
+                <li><a href="<?php echo e(route('books')); ?>" class="block py-2 px-2 rounded hover:bg-slate-50">Buku</a></li>
                 <li><a href="<?php echo e(route('announcements')); ?>" class="block py-2 px-2 rounded hover:bg-slate-50">Pengumuman</a></li>
                 <li><a href="<?php echo e(route('news')); ?>"          class="block py-2 px-2 rounded hover:bg-slate-50">Berita</a></li>
             </ul>

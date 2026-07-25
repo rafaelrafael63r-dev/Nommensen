@@ -40,11 +40,9 @@ class CooperationResource extends Resource
     protected static ?string $modelLabel = 'Kerja Sama';
     protected static ?string $pluralModelLabel = 'Kerja Sama';
 
-    // GROUP & SORT (FIX DI SINI)
-    
+    protected static string|UnitEnum|null $navigationGroup = 'Manajemen Konten';
     protected static ?int $navigationSort = 1;
 
-    // TITLE
     protected static ?string $recordTitleAttribute = 'Cooperation';
 
     // FORM
